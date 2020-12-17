@@ -124,21 +124,21 @@ Les éléments suivants sont créés dans la div `#app` via JavaScript:
     - une image de vaccin (présente dans le dossier "static")
     - toutes les infos disponibles pour ce vaccin
     - un "input" de "quantité" et un bouton "réserver" à côté
-- un élément `footer` présente la commande en cours (vide au début), et un bouton "passer la commande"
+- un élément `footer` résume la commande en cours (vide au début), et contient un bouton "passer la commande"
 
 ### Manipulation du DOM et interaction utilisateur
-- Lorsque l'utilisateur clique sur "classer par prix" les vaccins sont ré-ordonnés du moins cher au plus cher
-- Lorsqu'un utilisateur clique sur "réserver" dans une carte de vaccin
-  - il apparaît dans la commande du `footer`, avec la quantité demandée (ex: Tozinameran x3)
+- Lorsque l'utilisateur clique sur "cacher les vaccins non approuvés" les vaccins non approuvés sont cachés. On peut désormais les re-montrer grâce au même bouton
+- Lorsqu'un utilisateur clique sur le bouton "réserver" d'une carte de vaccin
+  - le vaccin apparaît dans la commande du `footer`, avec la quantité demandée (ex: Tozinameran x3)
   - l'input de quantité disparaît de la carte
   - le bouton "réserver" de ce vaccin devient `disabled`
 - Lorsqu'un utilisateur clique sur "passer la commande" dans le `footer`:
-  - la page se vide
-  -  un message indique "La commande a bien été enregistrée"
+  - la page se vide entièrement
+  - un message indique "La commande a bien été enregistrée..."
 
-### Bonus (pas compté dans les points, peut réhausser la note finale):
+### Bonus (pas compté dans les points - peut réhausser la note finale):
 - sur cet écran final, un bouton "Annuler la commande" permet de  recharger automatiquement la page dans son état initial
-- le bouton "cacher les vaccins non approuvé" fonctionne
+- le bouton "classer les vaccins part prix" fonctionne, et réordonne les cartes du vaccin le moins cher ou plus cher
 - Améliorer l'affichage de votre site grâce aux SCSS
 - L'action de passer commande lorsqu'il n'y a pas de commande est impossible
 - Un bouton dans le `footer` permet d'annuler toute la réservation d'un coup
