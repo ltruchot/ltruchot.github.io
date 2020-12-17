@@ -21,9 +21,9 @@ Répartition sur 100 pts
 
 *Pas le droit de toucher au HTML. Tout le site est généré depuis le JavaScript. Par contre on peut changer le SCSS.*
 
-*Frameworks/Librairies de SPA non autorisés (Angular, React, Vue, Jquery...)*
+*Frameworks/Librairies de SPA non autorisés (Angular, React, Vue, Jquery...).*
 
-*Les questions au formateur à propos des consignes ou liées aux problèmes techniques sont autorisées*
+*Les questions au formateur à propos des consignes ou liées aux problèmes techniques sont autorisées.*
 
 - Envoyez votre travail aux formateurs (ltruchot) via un lien vers un repo github AVANT 16h45 le 18/12/2020
 - Ne touchez plus jamais à ce repo après 16h45 sous peine de malus important
@@ -49,11 +49,11 @@ Vous pouvez répondre à même ce document ou dans un fichier à part.
 ## Épreuve pratique sur 80pts
 Vous êtes codeuse/codeur JavaScript dans une clinique du centre-ville.
 Vous développez un outil de pré-commande de vaccins dans les stocks publiques de la ville, pour les responsables d'équipes médicales.
-Votre site doit premettre à ces personnes de réserver différents types de vaccins parmi ceux en cours de développement.
+Votre site doit permettre à ces personnes de réserver différents types de vaccins parmi ceux en cours de développement.
 
 Cloner et utiliser cette "seed" pour produire votre Single Page Application.
 
-Le script `./script.js` est déjà lié à la page d'accueil `./index.html` grâce à Parcel, de même que `style.scss` - il ne faut donc rien changer dans cette architecture (ne jamais touche le HTML).
+Le script `./script.js` est déjà lié à la page `./index.html` grâce à Parcel, de même que `style.scss` - il ne faut donc rien changer dans cette architecture (ne jamais toucher le HTML, garder le lien vers les styles dans le script).
 
 - supprimer le dossier ".git" à la racine du clone
 - créer votre propre repo/remote sur votre github et l'associer à votre clone du projet
@@ -62,7 +62,7 @@ Le script `./script.js` est déjà lié à la page d'accueil `./index.html` grâ
 - add, commit, et push réguliers sont recommandés
 
 ### Modéliser les données
-Produire un fichier JS qui exporte un Array d'objets avec les data suivantes:
+Produire un fichier data.js dans `./src`, qui exporte un Array d'objets avec les data suivantes:
 #### Vaccin 1
 Nom: BBIBP-CorV  
 Inventeurs: Sinopharm  
@@ -116,7 +116,7 @@ Approuvé: non
 Les éléments suivants sont créés dans la div `#app` via JavaScript:
 - un `h1` avec le nom du site
 - un élément `header`, présentant 
-  - un bouton pour classer par prix
+  - un bouton pour classer les vaccins par prix
   - un bouton pour cacher les vaccins "non appouvés" 
 - un élément HTML `main`. 
   - c'est le catalogue montrant tous les vaccins sous forme de "cartes", côtes à côtes ou à la ligne
