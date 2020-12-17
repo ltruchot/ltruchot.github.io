@@ -10,12 +10,12 @@ Répartition sur 100 pts
 - épreuve pratique:
   - qualité du code: 20 pts
   - javascript statique (génération HTML): 30 pts
-  - javascript dynamique (intéractions utilisateur): 30 pts
+  - javascript dynamique (interactions utilisateur): 30 pts
 
 ## Consignes
 *Toutes sources d'information autorisées, mais pas de communication interpersonnelles pendant l'épreuve. L'aspect individuel/unique de la résolution des questions et du problème fait partie de la note.*
 
-*Deux langues autorisée: français, anglais.*
+*Deux langues autorisées: français, anglais.*
 
 *Copier/coller de code d'internet sanctionnés.*
 
@@ -42,13 +42,13 @@ Vous pouvez répondre à même ce document ou dans un fichier à part.
 - Est-ce que SASS est un langage qui est interprété par les navigateurs ?
 - Pourquoi peut-on dire que JavaScript est un langage "multi-paradigmes" ? **(s)**
 - En JS, une fonction peut-elle retourner une fonction ?
-- Est-ce que "alert" existe en Node.JS ?
+- Est-ce que `alert` existe en Node.JS ?
 - Est-ce que `window.console.log === console.log` dans le navigateur ?
-- Quel est votre aspect préféré du JavaScript ? **(s)**
+- Quel est votre aspect préféré de JavaScript ? **(s)**
 
 ## Épreuve pratique sur 80pts
 Vous êtes codeuse/codeur JavaScript dans une clinique du centre-ville.
-Vous développez un outil de pré-commande de vaccins dans les stocks publiques de la ville, pour les responsables d'équipes médicales.
+Vous développez un outil de pré-commande de vaccins dans les stocks publics de la ville, pour les responsables d'équipes médicales.
 Votre site doit permettre à ces personnes de réserver différents types de vaccins parmi ceux en cours de développement.
 
 Cloner et utiliser cette "seed" pour produire votre Single Page Application.
@@ -117,9 +117,9 @@ Les éléments suivants sont créés dans la div `#app` via JavaScript:
 - un `h1` avec le nom du site
 - un élément `header`, présentant 
   - un bouton pour classer les vaccins par prix
-  - un bouton pour cacher les vaccins "non appouvés" 
+  - un bouton pour cacher les vaccins "non approuvés" 
 - un élément HTML `main`. 
-  - c'est le catalogue montrant tous les vaccins sous forme de "cartes", côtes à côtes ou à la ligne
+  - c'est le catalogue montrant tous les vaccins sous forme de "cartes", côte à côte ou à la ligne
   - chaque carte présente 
     - une image de vaccin (présente dans le dossier "static")
     - toutes les infos disponibles pour ce vaccin
@@ -138,7 +138,7 @@ Les éléments suivants sont créés dans la div `#app` via JavaScript:
 
 ### Bonus (pas compté dans les points - peut réhausser la note finale):
 - sur cet écran final, un bouton "Annuler la commande" permet de  recharger automatiquement la page dans son état initial
-- le bouton "classer les vaccins part prix" fonctionne, et réordonne les cartes du vaccin le moins cher ou plus cher
+- le bouton "classer les vaccins par prix" fonctionne, et réordonne les cartes du vaccin le moins cher au plus cher
 - Améliorer l'affichage de votre site grâce aux SCSS
 - L'action de passer commande lorsqu'il n'y a pas de commande est impossible
 - Un bouton dans le `footer` permet d'annuler toute la réservation d'un coup
