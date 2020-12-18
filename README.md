@@ -85,7 +85,7 @@ Inventeurs: AstraZeneca, University of Oxford
 Lieux de production: Royaume Unis, Brésil, Inde  
 Technologie: adenovirus  
 Quantité: 5028  
-Prix unitaire: 8$  
+Prix unitaire: 1.78$  
 Approuvé: non  
 #### Vaccin 4
 Nom: Tozinameran  
