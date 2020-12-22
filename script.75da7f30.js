@@ -347,6 +347,11 @@ var renderMain = function renderMain(_ref2) {
       authorizedFilter = _ref2.authorizedFilter,
       priceSort = _ref2.priceSort;
   // pour faire les cartes, on filtre, on tri, et enfin on map ! Booooooom, j'adore JS
+  // la méthode ".toFixed(2)" est un classique de l'affichage de devise:
+  // transforme un nombre en string avec 2 chiffres après la virgule
+  // ".join('')" assemble les élements d'un tableau en une seule string
+  // filter et sort ont une ternaire qui, selon le cas...
+  // ...applique une fonction qui ne fait rien (identity)  ou qui agit. Habile !
   main.innerHTML = vaccines.filter(authorizedFilter ? prop('approuve') : identity).sort(priceSort ? sortBy('prix') : identity).map(function (vaccine, i) {
     return "\n  <div class=\"carte p-10 md:w-96 flex flex-col\" id=\"item-".concat(i, "\">\n    <div class=\"pattern-dots-md gray-light\">\n      <div class=\"rounded bg-gray-800 p-4 transform translate-x-6 -translate-y-6\">\n        <img src=\"").concat(vaccine.img, "\" class=\"block w-full mb-4\" />\n        <div class=\"flex items-center mb-2\">\n          <div class=\"w-10 h-10 mr-4 inline-flex items-center justify-center rounded-full ").concat(vaccine.technologie === 'ARN messager' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700', " flex-shrink-0 p-2\">\n              <i class=\"fas ").concat(vaccine.technologie === 'ARN messager' ? 'fa-dna' : 'fa-viruses', "\"></i>\n          </div>\n          ").concat(vaccine.technologie, "\n        </div>\n        <div class=\"flex-grow\">\n          <h2 class=\"text-xl font-medium mb-3\">").concat(vaccine.nom, "</h2>\n          <div class=\"flex\">\n            <input \n              type=\"number\" \n              class=\"ipt-qte text-gray-800 w-1/2 mr-1 p-2 rounded\"\n              ").concat(vaccine.reservation ? 'disabled' : '', "\n               />\n            <button \n              class=\"btn-reserver w-1/2 ml-1 p-2 bold rounded ").concat(vaccine.reservation ? 'bg-gray-500 text-gray-400' : 'bg-blue-100 text-blue-700', "\"\n              ").concat(vaccine.reservation ? 'disabled' : '', ">R\xE9server</button>\n          </div>\n          <h3 class=\"bold underline mb-2\">Informations compl\xE9mentaires</h3>\n          <p class=\"leading-relaxed text-sm\">\n             <strong>Prix unit.:</strong> \u20AC").concat(vaccine.prix.toFixed(2), "<br />\n             <strong>Qt\xE9 disponible:</strong> ").concat(vaccine.quantite, "<br />\n             <strong>Marque:</strong> ").concat(vaccine.inventeurs.join(', '), "<br />\n             <strong>Lieux:</strong> ").concat(vaccine.lieux.join(', '), "\n          </p>\n        </div>\n      </div>\n    </div>\n  </div>\n  ");
   }).join('');
@@ -406,15 +411,24 @@ main.addEventListener('click', function (e) {
     var idx = carte.id.split('-')[1];
     var qte = parseInt(ipt.value, 10);
 
-    if (qte <= state.vaccines[idx].quantite) {
-      state.products.push([idx, qte]);
-      state.vaccines[idx].reservation = true;
-      renderMain(state);
-      renderFooter(state);
-    } else {
-      window.alert("Il n'y a pas assez de r\xE9serve pour le vaccin ".concat(state.vaccines[idx].nom));
+    if (Number.isNaN(qte) || qte <= 0) {
+      window.alert("La quantit\xE9 de vaccin ".concat(state.vaccines[idx].nom, " est erron\xE9e ou fantaisiste."));
       ipt.value = '';
+      return;
     }
+
+    if (qte > state.vaccines[idx].quantite) {
+      window.alert("Il n'y a pas assez de r\xE9serve pour le vaccin ".concat(state.vaccines[idx].nom, "."));
+      ipt.value = '';
+      return;
+    } // comme les "if" ont un return, pas besoin de "else"...
+    // ...ceci n'a lieu que si il n'y a pas d'erreur avant
+
+
+    state.products.push([idx, qte]);
+    state.vaccines[idx].reservation = true;
+    renderMain(state);
+    renderFooter(state);
   }
 });
 footer.addEventListener('click', function (e) {
@@ -459,7 +473,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65016" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52973" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
