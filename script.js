@@ -67,6 +67,11 @@ renderHeader(state);
 const main = document.querySelector('main');
 const renderMain = ({ vaccines, authorizedFilter, priceSort }) => {
   // pour faire les cartes, on filtre, on tri, et enfin on map ! Booooooom, j'adore JS
+  // la méthode ".toFixed(2)" est un classique de l'affichage de devise:
+  // transforme un nombre en string avec 2 chiffres après la virgule
+  // ".join('')" assemble les élements d'un tableau en une seule string
+  // filter et sort ont une ternaire qui, selon le cas...
+  // ...applique une fonction qui ne fait rien (identity)  ou qui agit. Habile !
   main.innerHTML = vaccines
     .filter(authorizedFilter ? prop('approuve') : identity)
     .sort(priceSort ? sortBy('prix') : identity)
@@ -150,15 +155,23 @@ main.addEventListener('click', (e) => {
     // ne garder que la partie chiffrée de l'id
     const idx = carte.id.split('-')[1];
     const qte = parseInt(ipt.value, 10);
-    if (qte <= state.vaccines[idx].quantite) {
-      state.products.push([idx, qte]);
-      state.vaccines[idx].reservation = true;
-      renderMain(state);
-      renderFooter(state);
-    } else {
-      window.alert(`Il n'y a pas assez de réserve pour le vaccin ${state.vaccines[idx].nom}`);
+    if (Number.isNaN(qte) || qte <= 0) {
+      window.alert(`La quantité de vaccin ${state.vaccines[idx].nom} est erronée ou fantaisiste.`);
       ipt.value = '';
+      return;
     }
+    if (qte > state.vaccines[idx].quantite) {
+      window.alert(`Il n'y a pas assez de réserve pour le vaccin ${state.vaccines[idx].nom}.`);
+      ipt.value = '';
+      return;
+    }
+
+    // comme les "if" ont un return, pas besoin de "else"...
+    // ...ceci n'a lieu que si il n'y a pas d'erreur avant
+    state.products.push([idx, qte]);
+    state.vaccines[idx].reservation = true;
+    renderMain(state);
+    renderFooter(state);
   }
 });
 
