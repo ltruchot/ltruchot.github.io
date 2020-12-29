@@ -2,6 +2,7 @@ import { identity, prop, sortBy } from './helpers';
 
 // une série de fonctions pures permettant le rendering de l'app
 
+// layout de base, utilisé 1x au début
 export const renderApp = () => `
 <h1 class="title-font text-center mb-8 font-extrabold text-6xl tracking-wider">
   Covid Killer
@@ -24,6 +25,7 @@ export const renderApp = () => `
 </footer>
 `;
 
+// header, rechargé selon l'état des boutons
 // les boutons changent en fonctions des params, grâce à des conditions ternaires
 export const renderHeader = ({ authorizedFilter, priceSort }) => `
   <button id="btn-filter" class="p-2 bold rounded bg-green-100 text-green-700">
@@ -38,14 +40,14 @@ export const renderHeader = ({ authorizedFilter, priceSort }) => `
   </button>
 `;
 
-export /* main */
+// main: le coeur de l'app
 // pour faire les cartes, on filtre, on tri, et enfin on map ! Booooooom, j'adore JS
 // la méthode ".toFixed(2)" est un classique de l'affichage de devise:
 // transforme un nombre en string avec 2 chiffres après la virgule
 // ".join('')" assemble les élements d'un tableau en une seule string
 // filter et sort ont une ternaire qui, selon le cas...
-// ...applique une fonction qui ne fait rien (identity)  ou qui agit. Habile !
-const renderMain = ({ vaccines, authorizedFilter, priceSort }) => vaccines
+// ...applique une fonction qui ne fait rien (identity)... ou qui agit. Habile !
+export const renderMain = ({ vaccines, authorizedFilter, priceSort }) => vaccines
   .filter(authorizedFilter ? prop('approuve') : identity)
   .sort(priceSort ? sortBy('prix') : identity)
   .map((vaccine, i) => `
@@ -84,9 +86,22 @@ const renderMain = ({ vaccines, authorizedFilter, priceSort }) => vaccines
   </div>
   `).join('');
 
+// footer: rechargé à chaque réservation
 export const renderFooter = ({ products, vaccines }) => products.map(([id, qte]) => `
     <li class="bg-gray-600 m-2 rounded p-2">
       ${vaccines[id].nom}
       <strong>x${qte} / €${(vaccines[id].prix * qte).toFixed(2)}</strong>
     </li>
   `).join('');
+
+// end: l'état final qd on passe la commande. sera render 1x
+// location.reload() rechargera intégralement la page si besoin
+export const renderEnd = ({ totalPrice }) => `
+<div class="text-center">
+  La commande a bien été enregistrée...<br /> 
+  Votre compte a été débité de €${totalPrice.toFixed(2)}.<br />
+  Le colis est en route, patience !<br />
+  <button onclick="location.reload()" class="mt-2 p-2 bold rounded bg-red-100 text-red-700">
+    Annuler
+  </button>
+</div>`;

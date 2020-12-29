@@ -1,7 +1,7 @@
 import './styles.scss';
 import { data } from './src/data';
 import {
-  renderHeader, renderMain, renderFooter, renderApp,
+  renderApp, renderHeader, renderMain, renderFooter, renderEnd,
 } from './src/rendering';
 
 console.log('Pourquoi tu regardes la console ? La confiance règne...');
@@ -98,9 +98,8 @@ main.addEventListener('click', (e) => {
 
 footer.addEventListener('click', (e) => {
   if (e.target.matches('#btn-annuler')) {
-    // click sur annuler -> vider le panier
+    // click sur annuler -> vider le panier / clean réservation vaccins
     state.products = [];
-    // clean les réservation de vaccins
     state.vaccines = state.vaccines.map((v) => ({ ...v, reservation: false }));
     // rerender
     commandeElement.innerHTML = renderFooter(state);
@@ -108,15 +107,6 @@ footer.addEventListener('click', (e) => {
     main.innerHTML = renderMain(state);
   } else if (e.target.matches('#btn-commande')) {
     // click sur commander -> remplacer contenu par un message
-    // location.reload() rechargera intégralement la page si besoin
-    document.body.innerHTML = `
-    <div class="text-center">
-      La commande a bien été enregistrée...<br /> 
-      Votre compte a été débité de €${state.totalPrice.toFixed(2)}.<br />
-      Le colis est en route, patience !<br />
-      <button onclick="location.reload()" class="mt-2 p-2 bold rounded bg-red-100 text-red-700">
-        Annuler
-      </button>
-    </div>`;
+    document.body.innerHTML = renderEnd(state);
   }
 });
