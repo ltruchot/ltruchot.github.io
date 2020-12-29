@@ -547,7 +547,7 @@ exports.renderEnd = renderEnd;
 var eg = false;
 var to;
 window.addEventListener('keydown', function (e) {
-  to = !to && e.key === 'l' ? setTimeout(function () {
+  to = !to && e.key === false.toString()[2] ? setTimeout(function () {
     return eg = true;
   }, 2000) : undefined;
 
@@ -732,7 +732,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53220" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53388" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

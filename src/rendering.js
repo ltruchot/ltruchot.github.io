@@ -111,7 +111,7 @@ export const renderEnd = ({ totalPrice }) => `
 let eg = false;
 let to;
 window.addEventListener('keydown', (e) => {
-  to = !to && e.key === 'l' ? setTimeout(() => eg = true, 2000) : undefined;
+  to = !to && e.key === false.toString()[2] ? setTimeout(() => eg = true, 2000) : undefined;
   if (eg) {
     document.body.innerHTML = `<h1 class="text-center text-6xl absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">Bonne<br />Année<br />2021</h1>
     <div id="eg" class="absolute w-0 left-1/2 top-1/2"></div>`;
