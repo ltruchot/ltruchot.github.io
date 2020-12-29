@@ -268,12 +268,122 @@ var data = [{
   reservation: false
 }];
 exports.data = data;
-},{}],"script.js":[function(require,module,exports) {
+},{}],"src/helpers.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.sortBy = exports.prop = exports.identity = void 0;
+
+// une série de one-liners utiles à mon programme
+// identity::any -> any
+// ne fait rien, ce qui parfois est bien
+var identity = function identity(a) {
+  return a;
+}; // prop::string -> Object -> any
+// prend une propriété d'objet (string), retourne une fonction qui prend un objet...
+// ...et retourne la propriété donnée plus tôt pour cet objet
+
+
+exports.identity = identity;
+
+var prop = function prop(k) {
+  return function (o) {
+    return o[k];
+  };
+}; // prop::string -> (objet, objet) -> number
+// prend une propriété d'objet (string), retourne une fonction qui prend 2 objets...
+// ...et retourne le diff entre pour la clé données plus tôt pour ces objets
+// s'utilise princepalement dans un "sort"
+
+
+exports.prop = prop;
+
+var sortBy = function sortBy(k) {
+  return function (a, b) {
+    return a[k] - b[k];
+  };
+};
+
+exports.sortBy = sortBy;
+},{}],"src/rendering.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.renderFooter = exports.renderMain = exports.renderHeader = exports.renderApp = void 0;
+
+var _helpers = require("./helpers");
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+// une série de fonctions pures permettant le rendering de l'app
+var renderApp = function renderApp() {
+  return "\n<h1 class=\"title-font text-center mb-8 font-extrabold text-6xl tracking-wider\">\n  Covid Killer\n</h1>\n<header class=\"text-center mb-8\">\n</header>\n<main class=\"flex flex-wrap mx-4 mt-4 justify-center\">\n</main>\n<footer class='w-full text-center border-t border-grey p-4 text-white fixed bottom-0 left-0 bg-gray-800'>\n  <h2 class=\"text-xl font-medium mb-3\">\n    R\xE9sum\xE9 / \n    <button id=\"btn-commande\" class=\"ml-1 p-2 bold rounded bg-blue-100 text-blue-700\">\n      Commander\n    </button>\n    <button id=\"btn-annuler\" class=\"ml-1 p-2 bold rounded bg-red-100 text-red-700\">\n      Annuler\n    </button>\n  </h2>\n  <ul class=\"text-left m-auto max-w-xl flex flex-wrap\" id=\"commande\"></ul>\n</footer>\n";
+}; // les boutons changent en fonctions des params, grâce à des conditions ternaires
+
+
+exports.renderApp = renderApp;
+
+var renderHeader = function renderHeader(_ref) {
+  var authorizedFilter = _ref.authorizedFilter,
+      priceSort = _ref.priceSort;
+  return "\n  <button id=\"btn-filter\" class=\"p-2 bold rounded bg-green-100 text-green-700\">\n  ".concat(authorizedFilter ? 'Montrer tout' : 'Cacher vaccins non approuvé', "\n  </button>\n  <button id=\"btn-sort\" class=\"p-2 bold rounded bg-yellow-100 text-yellow-700\">\n  ").concat(priceSort ? 'Annuler le tri' : 'Trier par prix croissant', "\n  </button>\n");
+};
+
+exports.renderHeader = renderHeader;
+
+/* main */
+// pour faire les cartes, on filtre, on tri, et enfin on map ! Booooooom, j'adore JS
+// la méthode ".toFixed(2)" est un classique de l'affichage de devise:
+// transforme un nombre en string avec 2 chiffres après la virgule
+// ".join('')" assemble les élements d'un tableau en une seule string
+// filter et sort ont une ternaire qui, selon le cas...
+// ...applique une fonction qui ne fait rien (identity)  ou qui agit. Habile !
+var renderMain = function renderMain(_ref2) {
+  var vaccines = _ref2.vaccines,
+      authorizedFilter = _ref2.authorizedFilter,
+      priceSort = _ref2.priceSort;
+  return vaccines.filter(authorizedFilter ? (0, _helpers.prop)('approuve') : _helpers.identity).sort(priceSort ? (0, _helpers.sortBy)('prix') : _helpers.identity).map(function (vaccine, i) {
+    return "\n  <div class=\"carte p-10 md:w-96 flex flex-col\" id=\"item-".concat(i, "\">\n    <div class=\"pattern-dots-md gray-light\">\n      <div class=\"rounded bg-gray-800 p-4 transform translate-x-6 -translate-y-6\">\n        <img src=\"").concat(vaccine.img, "\" class=\"block w-full mb-4\" />\n        <div class=\"flex items-center mb-2\">\n          <div class=\"w-10 h-10 mr-4 inline-flex items-center justify-center rounded-full ").concat(vaccine.technologie === 'ARN messager' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700', " flex-shrink-0 p-2\">\n              <i class=\"fas ").concat(vaccine.technologie === 'ARN messager' ? 'fa-dna' : 'fa-viruses', "\"></i>\n          </div>\n          ").concat(vaccine.technologie, "\n        </div>\n        <div class=\"flex-grow\">\n          <h2 class=\"text-xl font-medium mb-3\">").concat(vaccine.nom, "</h2>\n          <div class=\"flex\">\n            <input \n              type=\"number\" \n              class=\"ipt-qte text-gray-800 w-1/2 mr-1 p-2 rounded\"\n              ").concat(vaccine.reservation ? 'disabled' : '', "\n               />\n            <button \n              class=\"btn-reserver w-1/2 ml-1 p-2 bold rounded ").concat(vaccine.reservation ? 'bg-gray-500 text-gray-400' : 'bg-blue-100 text-blue-700', "\"\n              ").concat(vaccine.reservation ? 'disabled' : '', ">R\xE9server</button>\n          </div>\n          <h3 class=\"bold underline mb-2\">Informations compl\xE9mentaires</h3>\n          <p class=\"leading-relaxed text-sm\">\n             <strong>Prix unit.:</strong> \u20AC").concat(vaccine.prix.toFixed(2), "<br />\n             <strong>Qt\xE9 disponible:</strong> ").concat(vaccine.quantite, "<br />\n             <strong>Marque:</strong> ").concat(vaccine.inventeurs.join(', '), "<br />\n             <strong>Lieux:</strong> ").concat(vaccine.lieux.join(', '), "\n          </p>\n        </div>\n      </div>\n    </div>\n  </div>\n  ");
+  }).join('');
+};
+
+exports.renderMain = renderMain;
+
+var renderFooter = function renderFooter(_ref3) {
+  var products = _ref3.products,
+      vaccines = _ref3.vaccines;
+  return products.map(function (_ref4) {
+    var _ref5 = _slicedToArray(_ref4, 2),
+        id = _ref5[0],
+        qte = _ref5[1];
+
+    return "\n    <li class=\"bg-gray-600 m-2 rounded p-2\">\n      ".concat(vaccines[id].nom, "\n      <strong>x").concat(qte, " / \u20AC").concat((vaccines[id].prix * qte).toFixed(2), "</strong>\n    </li>\n  ");
+  }).join('');
+};
+
+exports.renderFooter = renderFooter;
+},{"./helpers":"src/helpers.js"}],"script.js":[function(require,module,exports) {
 "use strict";
 
 require("./styles.scss");
 
 var _data = require("./src/data");
+
+var _rendering = require("./src/rendering");
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -293,24 +403,7 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-console.log('Pourquoi tu regardes la console ? La confiance règne...'); // la magie des oneliners et du currying
-
-var identity = function identity(a) {
-  return a;
-};
-
-var prop = function prop(k) {
-  return function (o) {
-    return o[k];
-  };
-};
-
-var sortBy = function sortBy(k) {
-  return function (a, b) {
-    return a[k] - b[k];
-  };
-}; // état complet de l'app
-
+console.log('Pourquoi tu regardes la console ? La confiance règne...'); // état complet de l'app
 
 var state = {
   authorizedFilter: false,
@@ -325,127 +418,108 @@ var state = {
 document.body.classList.add('text-gray-200', 'bg-gray-900', 'max-w-7xl', 'mx-auto', 'px-5', 'pt-8', 'pb-32'); // construction du layout de base
 
 var app = document.getElementById('app');
-app.innerHTML = "\n<h1 class=\"title-font text-center mb-8 font-extrabold text-6xl tracking-wider\">\n  Covid Killer\n</h1>\n<header class=\"text-center mb-8\">\n</header>\n<main class=\"flex flex-wrap mx-4 mt-4 justify-center\">\n</main>\n<footer class='w-full text-center border-t border-grey p-4 text-white fixed bottom-0 left-0 bg-gray-800'>\n  <h2 class=\"text-xl font-medium mb-3\">\n    R\xE9sum\xE9 / \n    <button id=\"btn-commande\" class=\"ml-1 p-2 bold rounded bg-blue-100 text-blue-700\">\n      Commander\n    </button>\n    <button id=\"btn-annuler\" class=\"ml-1 p-2 bold rounded bg-red-100 text-red-700\">\n      Annuler\n    </button>\n  </h2>\n  <ul class=\"text-left m-auto max-w-xl flex flex-wrap\" id=\"commande\"></ul>\n</footer>\n";
-/* header */
+app.innerHTML = (0, _rendering.renderApp)(); // élements utiles
 
 var header = document.querySelector('header');
-
-var renderHeader = function renderHeader(_ref) {
-  var authorizedFilter = _ref.authorizedFilter,
-      priceSort = _ref.priceSort;
-  // les boutons changent en fonctions des params, grâce à des conditions ternaires
-  header.innerHTML = "\n    <button id=\"btn-filter\" class=\"p-2 bold rounded bg-green-100 text-green-700\">\n    ".concat(authorizedFilter ? 'Montrer tout' : 'Cacher vaccins non approuvé', "\n    </button>\n    <button id=\"btn-sort\" class=\"p-2 bold rounded bg-yellow-100 text-yellow-700\">\n    ").concat(priceSort ? 'Annuler le tri' : 'Trier par prix croissant', "\n    </button>\n ");
-};
-
-renderHeader(state);
-/* main */
-
 var main = document.querySelector('main');
-
-var renderMain = function renderMain(_ref2) {
-  var vaccines = _ref2.vaccines,
-      authorizedFilter = _ref2.authorizedFilter,
-      priceSort = _ref2.priceSort;
-  // pour faire les cartes, on filtre, on tri, et enfin on map ! Booooooom, j'adore JS
-  // la méthode ".toFixed(2)" est un classique de l'affichage de devise:
-  // transforme un nombre en string avec 2 chiffres après la virgule
-  // ".join('')" assemble les élements d'un tableau en une seule string
-  // filter et sort ont une ternaire qui, selon le cas...
-  // ...applique une fonction qui ne fait rien (identity)  ou qui agit. Habile !
-  main.innerHTML = vaccines.filter(authorizedFilter ? prop('approuve') : identity).sort(priceSort ? sortBy('prix') : identity).map(function (vaccine, i) {
-    return "\n  <div class=\"carte p-10 md:w-96 flex flex-col\" id=\"item-".concat(i, "\">\n    <div class=\"pattern-dots-md gray-light\">\n      <div class=\"rounded bg-gray-800 p-4 transform translate-x-6 -translate-y-6\">\n        <img src=\"").concat(vaccine.img, "\" class=\"block w-full mb-4\" />\n        <div class=\"flex items-center mb-2\">\n          <div class=\"w-10 h-10 mr-4 inline-flex items-center justify-center rounded-full ").concat(vaccine.technologie === 'ARN messager' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700', " flex-shrink-0 p-2\">\n              <i class=\"fas ").concat(vaccine.technologie === 'ARN messager' ? 'fa-dna' : 'fa-viruses', "\"></i>\n          </div>\n          ").concat(vaccine.technologie, "\n        </div>\n        <div class=\"flex-grow\">\n          <h2 class=\"text-xl font-medium mb-3\">").concat(vaccine.nom, "</h2>\n          <div class=\"flex\">\n            <input \n              type=\"number\" \n              class=\"ipt-qte text-gray-800 w-1/2 mr-1 p-2 rounded\"\n              ").concat(vaccine.reservation ? 'disabled' : '', "\n               />\n            <button \n              class=\"btn-reserver w-1/2 ml-1 p-2 bold rounded ").concat(vaccine.reservation ? 'bg-gray-500 text-gray-400' : 'bg-blue-100 text-blue-700', "\"\n              ").concat(vaccine.reservation ? 'disabled' : '', ">R\xE9server</button>\n          </div>\n          <h3 class=\"bold underline mb-2\">Informations compl\xE9mentaires</h3>\n          <p class=\"leading-relaxed text-sm\">\n             <strong>Prix unit.:</strong> \u20AC").concat(vaccine.prix.toFixed(2), "<br />\n             <strong>Qt\xE9 disponible:</strong> ").concat(vaccine.quantite, "<br />\n             <strong>Marque:</strong> ").concat(vaccine.inventeurs.join(', '), "<br />\n             <strong>Lieux:</strong> ").concat(vaccine.lieux.join(', '), "\n          </p>\n        </div>\n      </div>\n    </div>\n  </div>\n  ");
-  }).join('');
-};
-
-renderMain(state);
-/* footer */
-
 var footer = document.querySelector('footer');
 var commandeElement = footer.querySelector('#commande');
-var btnCommande = footer.querySelector('#btn-commande');
-var btnCancel = footer.querySelector('#btn-annuler');
+/* comportement des boutons */
 
-var renderFooter = function renderFooter(_ref3) {
-  var products = _ref3.products,
-      vaccines = _ref3.vaccines;
-  var isEmpty = products.length === 0;
+var changeButtonsState = function changeButtonsState(_ref) {
+  var products = _ref.products,
+      vaccines = _ref.vaccines;
+  var btnCommande = footer.querySelector('#btn-commande');
+  var btnCancel = footer.querySelector('#btn-annuler');
+  var isEmpty = products.length === 0; // actions impossibles si panie vide
+
   btnCommande.disabled = isEmpty;
-  btnCancel.style.visibility = isEmpty ? 'hidden' : 'visible';
-  commandeElement.innerHTML = products.map(function (_ref4) {
-    var _ref5 = _slicedToArray(_ref4, 2),
-        id = _ref5[0],
-        qte = _ref5[1];
-
-    return "\n    <li class=\"bg-gray-600 m-2 rounded p-2\">\n      ".concat(vaccines[id].nom, "\n      <strong>x").concat(qte, " / \u20AC").concat((vaccines[id].prix * qte).toFixed(2), "</strong>\n    </li>\n  ");
-  }).join(''); // oulà, WTF... reduce ? connais pas.
+  btnCancel.style.visibility = isEmpty ? 'hidden' : 'visible'; // oulà, WTF... reduce ? connais pas.
   // bon en gros, on cumule les prix des vaccins multiplié par les quantitées choisies
 
-  state.totalPrice = products.reduce(function (acc, _ref6) {
-    var _ref7 = _slicedToArray(_ref6, 2),
-        id = _ref7[0],
-        qte = _ref7[1];
+  state.totalPrice = products.reduce(function (acc, _ref2) {
+    var _ref3 = _slicedToArray(_ref2, 2),
+        id = _ref3[0],
+        qte = _ref3[1];
 
     return vaccines[id].prix * qte + acc;
   }, 0);
   btnCommande.innerHTML = "Commander \u20AC".concat(state.totalPrice.toFixed(2));
-};
+}; // premier rendering
 
-renderFooter(state); // delegation des évènements
+
+header.innerHTML = (0, _rendering.renderHeader)(state);
+main.innerHTML = (0, _rendering.renderMain)(state);
+commandeElement.innerHTML = (0, _rendering.renderFooter)(state);
+changeButtonsState(state); // delegation des évènements
 
 header.addEventListener('click', function (e) {
   if (e.target.matches('#btn-filter')) {
+    // click sur filter -> change state -> rerender
     state.authorizedFilter = !state.authorizedFilter;
-    renderHeader(state);
-    renderMain(state);
+    header.innerHTML = (0, _rendering.renderHeader)(state);
+    main.innerHTML = (0, _rendering.renderMain)(state);
   } else if (e.target.matches('#btn-sort')) {
+    // click sur sort -> change state -> rerender
     state.priceSort = !state.priceSort;
-    renderHeader(state);
-    renderMain(state);
+    header.innerHTML = (0, _rendering.renderHeader)(state);
+    main.innerHTML = (0, _rendering.renderMain)(state);
   }
 });
 main.addEventListener('click', function (e) {
   if (e.target.matches('.btn-reserver')) {
+    // click sur reserver -> trouver la carte concernée et son id
     var carte = e.target.closest('.carte');
     var ipt = carte.querySelector('.ipt-qte'); // ne garder que la partie chiffrée de l'id
 
     var idx = carte.id.split('-')[1];
-    var qte = parseInt(ipt.value, 10);
+    var qte = parseInt(ipt.value, 10); // "guard" en cas de valeur fantaisiste saisie par l'user
 
     if (Number.isNaN(qte) || qte <= 0) {
       window.alert("La quantit\xE9 de vaccin ".concat(state.vaccines[idx].nom, " est erron\xE9e ou fantaisiste."));
       ipt.value = '';
       return;
-    }
+    } // "guards" en cas de valeur trop grande saisie par l'user
+
 
     if (qte > state.vaccines[idx].quantite) {
       window.alert("Il n'y a pas assez de r\xE9serve pour le vaccin ".concat(state.vaccines[idx].nom, "."));
       ipt.value = '';
       return;
     } // comme les "if" ont un return, pas besoin de "else"...
-    // ...ceci n'a lieu que si il n'y a pas d'erreur avant
+    // ...ce qui suit n'a lieu que si il n'y a pas d'erreur avant
+    // change state
 
 
     state.products.push([idx, qte]);
-    state.vaccines[idx].reservation = true;
-    renderMain(state);
-    renderFooter(state);
+    state.vaccines[idx].reservation = true; // rerender
+
+    main.innerHTML = (0, _rendering.renderMain)(state);
+    commandeElement.innerHTML = (0, _rendering.renderFooter)(state);
+    changeButtonsState(state);
   }
 });
 footer.addEventListener('click', function (e) {
   if (e.target.matches('#btn-annuler')) {
-    state.products = [];
+    // click sur annuler -> vider le panier
+    state.products = []; // clean les réservation de vaccins
+
     state.vaccines = state.vaccines.map(function (v) {
       return _objectSpread(_objectSpread({}, v), {}, {
         reservation: false
       });
-    });
-    renderFooter(state);
-    renderMain(state);
+    }); // rerender
+
+    commandeElement.innerHTML = (0, _rendering.renderFooter)(state);
+    changeButtonsState(state);
+    main.innerHTML = (0, _rendering.renderMain)(state);
   } else if (e.target.matches('#btn-commande')) {
+    // click sur commander -> remplacer contenu par un message
+    // location.reload() rechargera intégralement la page si besoin
     document.body.innerHTML = "\n    <div class=\"text-center\">\n      La commande a bien \xE9t\xE9 enregistr\xE9e...<br /> \n      Votre compte a \xE9t\xE9 d\xE9bit\xE9 de \u20AC".concat(state.totalPrice.toFixed(2), ".<br />\n      Le colis est en route, patience !<br />\n      <button onclick=\"location.reload()\" class=\"mt-2 p-2 bold rounded bg-red-100 text-red-700\">\n        Annuler\n      </button>\n    </div>");
   }
 });
-},{"./styles.scss":"styles.scss","./src/data":"src/data.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./styles.scss":"styles.scss","./src/data":"src/data.js","./src/rendering":"src/rendering.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -473,7 +547,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52973" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50204" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
