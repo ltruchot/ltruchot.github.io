@@ -547,20 +547,21 @@ exports.renderEnd = renderEnd;
 var eg = false;
 var to;
 window.addEventListener('keydown', function (e) {
-  to = e.key === 'l' ? setTimeout(function () {
+  to = !to && e.key === 'l' ? setTimeout(function () {
     return eg = true;
   }, 2000) : undefined;
+
+  if (eg) {
+    document.body.innerHTML = "<h1 class=\"text-center text-6xl absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2\">Bonne<br />Ann\xE9e<br />2021</h1>\n    <div id=\"eg\" class=\"absolute w-0 left-1/2 top-1/2\"></div>";
+    (0, _domConfetti.confetti)(document.getElementById('eg'), {
+      duration: 7000,
+      spread: 360,
+      angle: 180
+    });
+  }
 });
 window.addEventListener('keyup', function () {
   clearTimeout(to);
-
-  if (eg) {
-    document.body.innerHTML = '<h1 class="text-center text-6xl m-auto mt-64 w-64">Bonne Année 2021</h1>';
-    (0, _domConfetti.confetti)(document.querySelector('h1'), {
-      duration: 7000,
-      spread: 360
-    });
-  }
 });
 },{"dom-confetti":"node_modules/dom-confetti/lib/main.js","./helpers":"src/helpers.js"}],"script.js":[function(require,module,exports) {
 "use strict";
@@ -731,7 +732,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51587" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53220" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
