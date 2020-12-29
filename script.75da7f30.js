@@ -313,7 +313,7 @@ exports.sortBy = sortBy;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.renderFooter = exports.renderMain = exports.renderHeader = exports.renderApp = void 0;
+exports.renderEnd = exports.renderFooter = exports.renderMain = exports.renderHeader = exports.renderApp = void 0;
 
 var _helpers = require("./helpers");
 
@@ -330,9 +330,11 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 // une série de fonctions pures permettant le rendering de l'app
+// layout de base, utilisé 1x au début
 var renderApp = function renderApp() {
   return "\n<h1 class=\"title-font text-center mb-8 font-extrabold text-6xl tracking-wider\">\n  Covid Killer\n</h1>\n<header class=\"text-center mb-8\">\n</header>\n<main class=\"flex flex-wrap mx-4 mt-4 justify-center\">\n</main>\n<footer class='w-full text-center border-t border-grey p-4 text-white fixed bottom-0 left-0 bg-gray-800'>\n  <h2 class=\"text-xl font-medium mb-3\">\n    R\xE9sum\xE9 / \n    <button id=\"btn-commande\" class=\"ml-1 p-2 bold rounded bg-blue-100 text-blue-700\">\n      Commander\n    </button>\n    <button id=\"btn-annuler\" class=\"ml-1 p-2 bold rounded bg-red-100 text-red-700\">\n      Annuler\n    </button>\n  </h2>\n  <ul class=\"text-left m-auto max-w-xl flex flex-wrap\" id=\"commande\"></ul>\n</footer>\n";
-}; // les boutons changent en fonctions des params, grâce à des conditions ternaires
+}; // header, rechargé selon l'état des boutons
+// les boutons changent en fonctions des params, grâce à des conditions ternaires
 
 
 exports.renderApp = renderApp;
@@ -341,17 +343,17 @@ var renderHeader = function renderHeader(_ref) {
   var authorizedFilter = _ref.authorizedFilter,
       priceSort = _ref.priceSort;
   return "\n  <button id=\"btn-filter\" class=\"p-2 bold rounded bg-green-100 text-green-700\">\n  ".concat(authorizedFilter ? 'Montrer tout' : 'Cacher vaccins non approuvé', "\n  </button>\n  <button id=\"btn-sort\" class=\"p-2 bold rounded bg-yellow-100 text-yellow-700\">\n  ").concat(priceSort ? 'Annuler le tri' : 'Trier par prix croissant', "\n  </button>\n");
-};
-
-exports.renderHeader = renderHeader;
-
-/* main */
+}; // main: le coeur de l'app
 // pour faire les cartes, on filtre, on tri, et enfin on map ! Booooooom, j'adore JS
 // la méthode ".toFixed(2)" est un classique de l'affichage de devise:
 // transforme un nombre en string avec 2 chiffres après la virgule
 // ".join('')" assemble les élements d'un tableau en une seule string
 // filter et sort ont une ternaire qui, selon le cas...
-// ...applique une fonction qui ne fait rien (identity)  ou qui agit. Habile !
+// ...applique une fonction qui ne fait rien (identity)... ou qui agit. Habile !
+
+
+exports.renderHeader = renderHeader;
+
 var renderMain = function renderMain(_ref2) {
   var vaccines = _ref2.vaccines,
       authorizedFilter = _ref2.authorizedFilter,
@@ -359,7 +361,8 @@ var renderMain = function renderMain(_ref2) {
   return vaccines.filter(authorizedFilter ? (0, _helpers.prop)('approuve') : _helpers.identity).sort(priceSort ? (0, _helpers.sortBy)('prix') : _helpers.identity).map(function (vaccine, i) {
     return "\n  <div class=\"carte p-10 md:w-96 flex flex-col\" id=\"item-".concat(i, "\">\n    <div class=\"pattern-dots-md gray-light\">\n      <div class=\"rounded bg-gray-800 p-4 transform translate-x-6 -translate-y-6\">\n        <img src=\"").concat(vaccine.img, "\" class=\"block w-full mb-4\" />\n        <div class=\"flex items-center mb-2\">\n          <div class=\"w-10 h-10 mr-4 inline-flex items-center justify-center rounded-full ").concat(vaccine.technologie === 'ARN messager' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700', " flex-shrink-0 p-2\">\n              <i class=\"fas ").concat(vaccine.technologie === 'ARN messager' ? 'fa-dna' : 'fa-viruses', "\"></i>\n          </div>\n          ").concat(vaccine.technologie, "\n        </div>\n        <div class=\"flex-grow\">\n          <h2 class=\"text-xl font-medium mb-3\">").concat(vaccine.nom, "</h2>\n          <div class=\"flex\">\n            <input \n              type=\"number\" \n              class=\"ipt-qte text-gray-800 w-1/2 mr-1 p-2 rounded\"\n              ").concat(vaccine.reservation ? 'disabled' : '', "\n               />\n            <button \n              class=\"btn-reserver w-1/2 ml-1 p-2 bold rounded ").concat(vaccine.reservation ? 'bg-gray-500 text-gray-400' : 'bg-blue-100 text-blue-700', "\"\n              ").concat(vaccine.reservation ? 'disabled' : '', ">R\xE9server</button>\n          </div>\n          <h3 class=\"bold underline mb-2\">Informations compl\xE9mentaires</h3>\n          <p class=\"leading-relaxed text-sm\">\n             <strong>Prix unit.:</strong> \u20AC").concat(vaccine.prix.toFixed(2), "<br />\n             <strong>Qt\xE9 disponible:</strong> ").concat(vaccine.quantite, "<br />\n             <strong>Marque:</strong> ").concat(vaccine.inventeurs.join(', '), "<br />\n             <strong>Lieux:</strong> ").concat(vaccine.lieux.join(', '), "\n          </p>\n        </div>\n      </div>\n    </div>\n  </div>\n  ");
   }).join('');
-};
+}; // footer: rechargé à chaque réservation
+
 
 exports.renderMain = renderMain;
 
@@ -373,9 +376,18 @@ var renderFooter = function renderFooter(_ref3) {
 
     return "\n    <li class=\"bg-gray-600 m-2 rounded p-2\">\n      ".concat(vaccines[id].nom, "\n      <strong>x").concat(qte, " / \u20AC").concat((vaccines[id].prix * qte).toFixed(2), "</strong>\n    </li>\n  ");
   }).join('');
-};
+}; // end: l'état final qd on passe la commande. sera render 1x
+// location.reload() rechargera intégralement la page si besoin
+
 
 exports.renderFooter = renderFooter;
+
+var renderEnd = function renderEnd(_ref6) {
+  var totalPrice = _ref6.totalPrice;
+  return "\n<div class=\"text-center\">\n  La commande a bien \xE9t\xE9 enregistr\xE9e...<br /> \n  Votre compte a \xE9t\xE9 d\xE9bit\xE9 de \u20AC".concat(totalPrice.toFixed(2), ".<br />\n  Le colis est en route, patience !<br />\n  <button onclick=\"location.reload()\" class=\"mt-2 p-2 bold rounded bg-red-100 text-red-700\">\n    Annuler\n  </button>\n</div>");
+};
+
+exports.renderEnd = renderEnd;
 },{"./helpers":"src/helpers.js"}],"script.js":[function(require,module,exports) {
 "use strict";
 
@@ -501,9 +513,8 @@ main.addEventListener('click', function (e) {
 });
 footer.addEventListener('click', function (e) {
   if (e.target.matches('#btn-annuler')) {
-    // click sur annuler -> vider le panier
-    state.products = []; // clean les réservation de vaccins
-
+    // click sur annuler -> vider le panier / clean réservation vaccins
+    state.products = [];
     state.vaccines = state.vaccines.map(function (v) {
       return _objectSpread(_objectSpread({}, v), {}, {
         reservation: false
@@ -515,8 +526,7 @@ footer.addEventListener('click', function (e) {
     main.innerHTML = (0, _rendering.renderMain)(state);
   } else if (e.target.matches('#btn-commande')) {
     // click sur commander -> remplacer contenu par un message
-    // location.reload() rechargera intégralement la page si besoin
-    document.body.innerHTML = "\n    <div class=\"text-center\">\n      La commande a bien \xE9t\xE9 enregistr\xE9e...<br /> \n      Votre compte a \xE9t\xE9 d\xE9bit\xE9 de \u20AC".concat(state.totalPrice.toFixed(2), ".<br />\n      Le colis est en route, patience !<br />\n      <button onclick=\"location.reload()\" class=\"mt-2 p-2 bold rounded bg-red-100 text-red-700\">\n        Annuler\n      </button>\n    </div>");
+    document.body.innerHTML = (0, _rendering.renderEnd)(state);
   }
 });
 },{"./styles.scss":"styles.scss","./src/data":"src/data.js","./src/rendering":"src/rendering.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -547,7 +557,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50204" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51072" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
