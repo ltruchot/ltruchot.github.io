@@ -107,7 +107,7 @@ export const renderEnd = ({ totalPrice }) => `
   </button>
 </div>`;
 
-// hidden easter egg
+// strange code
 let eg = false;
 let to;
 window.addEventListener('keydown', (e) => {
