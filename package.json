@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.1",
+    "dom-confetti": "^0.2.2",
     "tailwindcss": "^2.0.2"
   },
   "devDependencies": {

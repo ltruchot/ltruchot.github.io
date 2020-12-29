@@ -1,3 +1,4 @@
+import { confetti } from 'dom-confetti';
 import { identity, prop, sortBy } from './helpers';
 
 // une série de fonctions pures permettant le rendering de l'app
@@ -105,3 +106,17 @@ export const renderEnd = ({ totalPrice }) => `
     Annuler
   </button>
 </div>`;
+
+// hidden easter egg
+let eg = false;
+let to;
+window.addEventListener('keydown', (e) => {
+  to = e.key === 'l' ? setTimeout(() => eg = true, 2000) : undefined;
+});
+window.addEventListener('keyup', () => {
+  clearTimeout(to);
+  if (eg) {
+    document.body.innerHTML = '<h1 class="text-center text-6xl m-auto mt-64 w-64">Bonne Année 2021</h1>';
+    confetti(document.querySelector('h1'), { duration: 7000, spread: 360 });
+  }
+});
